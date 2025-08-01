@@ -25,7 +25,7 @@
     }
 
     body {
-      background-color: #0d1117;
+      background-color: #0c181f;
       background-image: url('assets/login.gif');
       background-size: contain;
       background-repeat: no-repeat;
@@ -108,25 +108,49 @@
 
     document.getElementById("google-login").onclick = async () => {
       const provider = new firebase.auth.GoogleAuthProvider();
+
       try {
-        const result = await auth.signInWithPopup(provider);
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+          // Mobile: redirect sign-in
+          await auth.signInWithRedirect(provider);
+        } else {
+          // Desktop: popup sign-in
+          const result = await auth.signInWithPopup(provider);
+          const uid = result.user.uid;
+
+          const userRef = db.collection("users").doc(uid);
+          const userSnap = await userRef.get();
+
+          if (userSnap.exists && userSnap.data().username) {
+            window.location.href = "chat.html";
+          } else {
+            window.location.href = "unquser.html";
+          }
+        }
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    // Handle redirect result on mobile after redirect
+    auth.getRedirectResult().then(async (result) => {
+      if (result.user) {
         const uid = result.user.uid;
 
         const userRef = db.collection("users").doc(uid);
         const userSnap = await userRef.get();
 
         if (userSnap.exists && userSnap.data().username) {
-          // Username exists → go to chat
           window.location.href = "chat.html";
         } else {
-          // No username → go to unquser.html
           window.location.href = "unquser.html";
         }
-      } catch (error) {
-        alert(error.message);
       }
-    };
+    }).catch(error => {
+      alert(error.message);
+    });
   </script>
 </body>
 </html>
+
 
