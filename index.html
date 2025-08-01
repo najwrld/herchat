@@ -27,7 +27,7 @@
     body {
       background-color: #0c181f;
       background-image: url('assets/login.gif');
-      background-size: contain;
+      background-size: 100% auto;
       background-repeat: no-repeat;
       background-position: top center;
       position: relative;
@@ -35,7 +35,7 @@
       justify-content: center;
       align-items: center;
     }
-    /* Dark overlay */
+
     body::before {
       content: "";
       position: fixed;
@@ -86,7 +86,7 @@
   </style>
 </head>
 <body>
-  <div class="login-container">
+  <div class="login-container" id="login-box">
     <h1>Welcome to herchat</h1>
     <button id="google-login">Sign in with Google</button>
     <div class="footer">Your private 1-on-1 chat app</div>
@@ -106,18 +106,30 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // Skip login screen if already signed in
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const userRef = db.collection("users").doc(uid);
+        const userSnap = await userRef.get();
+
+        if (userSnap.exists && userSnap.data().username) {
+          window.location.href = "chat.html";
+        } else {
+          window.location.href = "unquser.html";
+        }
+      }
+    });
+
     document.getElementById("google-login").onclick = async () => {
       const provider = new firebase.auth.GoogleAuthProvider();
 
       try {
         if (/Mobi|Android/i.test(navigator.userAgent)) {
-          // Mobile: redirect sign-in
           await auth.signInWithRedirect(provider);
         } else {
-          // Desktop: popup sign-in
           const result = await auth.signInWithPopup(provider);
           const uid = result.user.uid;
-
           const userRef = db.collection("users").doc(uid);
           const userSnap = await userRef.get();
 
@@ -132,11 +144,9 @@
       }
     };
 
-    // Handle redirect result on mobile after redirect
     auth.getRedirectResult().then(async (result) => {
       if (result.user) {
         const uid = result.user.uid;
-
         const userRef = db.collection("users").doc(uid);
         const userSnap = await userRef.get();
 
@@ -152,6 +162,3 @@
   </script>
 </body>
 </html>
-
-
-
