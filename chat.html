@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>herchat – Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fira Code font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Fira Code', monospace;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background-color: #161b22;
+      color: #c9d1d9;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    #chat-with {
+      font-size: 13px;
+      color: #8b949e;
+    }
+
+    #change-chat-btn {
+      background-color: #21262d;
+      color: #58a6ff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #messages {
+      flex-grow: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .message.self {
+      background-color: #238636;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .message.other {
+      background-color: #21262d;
+      color: #c9d1d9;
+      align-self: flex-start;
+    }
+
+    #input-area {
+      display: flex;
+      padding: 12px 16px;
+      background-color: #161b22;
+    }
+
+    #message-input {
+      flex-grow: 1;
+      padding: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      outline: none;
+      background-color: #0d1117;
+      color: #c9d1d9;
+    }
+
+    #send-btn {
+      background-color: #238636;
+      border: none;
+      padding: 10px 16px;
+      margin-left: 10px;
+      font-weight: 700;
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #open-chat-btn {
+      margin: auto;
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 20px;
+      background-color: #238636;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-header">
+    <div>
+      <div id="chat-with">Chatting with: <span id="chat-username">(none)</span></div>
+      <div id="your-name">You: <span id="your-username">(loading)</span></div>
+    </div>
+    <button id="change-chat-btn">Chat</button>
+  </div>
+
+  <div id="messages"></div>
+
+  <div id="input-area">
+    <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" />
+    <button id="send-btn">Send</button>
+  </div>
+
+  <button id="open-chat-btn" style="display:none;">Open Chat</button>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDxYe6X-P91V1tKmRnHraO7H8ElTGpDMps",
+      authDomain: "herchat-c8563.firebaseapp.com",
+      projectId: "herchat-c8563",
+      storageBucket: "herchat-c8563.appspot.com",
+      messagingSenderId: "419441997929",
+      appId: "1:419441997929:web:782de619ab6834e8960af8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser;
+    let chatWith = localStorage.getItem("chatWith");
+
+    const chatHeader = document.getElementById("chat-header");
+    const chatUsernameSpan = document.getElementById("chat-username");
+    const yourUsernameSpan = document.getElementById("your-username");
+    const messagesDiv = document.getElementById("messages");
+    const messageInput = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+    const changeChatBtn = document.getElementById("change-chat-btn");
+    const openChatBtn = document.getElementById("open-chat-btn");
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        return;
+      }
+      currentUser = user;
+      const userDoc = await db.collection("users").doc(user.uid).get();
+      const handle = userDoc.exists ? userDoc.data().handle : user.email.split("@")[0];
+      yourUsernameSpan.textContent = handle;
+
+      if (chatWith) {
+        chatUsernameSpan.textContent = chatWith;
+        loadChat();
+      } else {
+        openChatBtn.style.display = "block";
+      }
+    });
+
+    function loadChat() {
+      chatHeader.style.display = "flex";
+      messagesDiv.innerHTML = "";
+      const id = [currentUser.uid, chatWith].sort().join("_");
+      db.collection("chats").doc(id).collection("messages").orderBy("timestamp")
+        .onSnapshot(snapshot => {
+          messagesDiv.innerHTML = "";
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const msg = document.createElement("div");
+            msg.className = "message " + (data.sender === currentUser.uid ? "self" : "other");
+            msg.textContent = data.text;
+            messagesDiv.appendChild(msg);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          });
+        });
+    }
+
+    sendBtn.onclick = () => {
+      const text = messageInput.value.trim();
+      if (!text || !chatWith) return;
+      const id = [currentUser.uid, chatWith].sort().join("_");
+      db.collection("chats").doc(id).collection("messages").add({
+        text,
+        sender: currentUser.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      messageInput.value = "";
+    };
+
+    changeChatBtn.onclick = () => {
+      const handle = prompt("Enter username to chat with:");
+      if (handle && handle !== currentUser.uid) {
+        chatWith = handle;
+        localStorage.setItem("chatWith", chatWith);
+        chatUsernameSpan.textContent = chatWith;
+        loadChat();
+      }
+    };
+
+    openChatBtn.onclick = () => {
+      changeChatBtn.click();
+      openChatBtn.style.display = "none";
+    };
+  </script>
+</body>
+</html>
