@@ -19,10 +19,65 @@
     html, body {
       margin: 0;
       height: 100%;
-      background-color: #0d1430; /* Navy blue background */
+      background-color: #0d1430;
       color: #c9d1d9;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+    }
+
+    #container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width: 220px;
+      background-color: #161b22;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 8px;
+      overflow-y: auto;
+      user-select: none;
+    }
+    #sidebar h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #58a6ff;
+      margin: 0 0 12px 12px;
+      user-select: text;
+    }
+    .recent-user {
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      color: #c9d1d9;
+      font-size: 13px;
+      transition: background-color 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+    }
+    .recent-user:hover {
+      background-color: #1f6feb;
+      color: white;
+    }
+    .recent-user.active {
+      background-color: #494491;
+      font-weight: 700;
+    }
+
+    /* Main chat area */
+    #main-chat {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     #top-bar {
@@ -31,49 +86,78 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #151a2e; /* blue accent */
+      border-bottom: 2px solid #161b22;
       user-select: none;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    #chat-info {
+      display: flex;
+      align-items: center;
+      user-select: none;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     #current-chat-user {
-      font-size: 10px;
+      font-size: 15px;
       color: #58a6ff;
-      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    #chat-status {
+      font-size: 13px;
+      font-style: italic;
+      color: #8b949e;
+      user-select: none;
+      min-width: 120px;
     }
 
     #logged-in-user {
-      font-size: 8px;
+      font-size: 10px;
       color: #8b949e;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+      user-select: none;
+    }
+
+    #typing-indicator {
+      font-size: 11px;
+      color: #58a6ff;
+      font-style: italic;
+      height: 18px;
+      user-select: none;
+      margin-top: 4px;
+      min-height: 18px;
+      flex-basis: 100%;
     }
 
     .top-actions {
       display: flex;
       gap: 10px;
+      flex-shrink: 0;
     }
 
     .top-btn {
-      background-color: #1f6feb;
+      background-color: #494491;
       border: none;
       padding: 8px 14px;
       font-size: 15px;
       font-weight: 300;
       color: white;
-      border-radius: 6px;
+      border-radius: 9px;
       cursor: pointer;
       transition: background 0.2s ease;
     }
-
     .top-btn:hover {
-      background-color: #3a81ff;
+      background-color: #9467be;
     }
 
     #messages {
       flex-grow: 1;
       overflow-y: auto;
       padding: 20px;
-      background-color: #0b1025;
+      background-color: #161b22;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -84,12 +168,13 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
+      position: relative;
     }
 
     .message {
-      background-color: solid #0d1430;
+      background-color: #0d1430;
       color: white;
-      padding: 12px 16px 22px 16px; /* extra bottom padding for timestamp */
+      padding: 12px 16px 22px 16px;
       border-radius: 20px;
       max-width: 80%;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -99,8 +184,9 @@
       margin-left: auto;
       margin-right: auto;
       display: inline-block;
-      position: relative; /* for timestamp positioning */
+      position: relative;
       text-align: center;
+      min-width: 100px; 
     }
 
     .message p {
@@ -108,13 +194,15 @@
     }
 
     .self {
-      background-color: #1f6feb; /* blue accent for self */
+      background-color: #494491;
       color: white;
+      margin-left: auto;
     }
 
     .other {
       background-color: #21262d;
       color: #c9d1d9;
+      margin-right: auto;
     }
 
     .timestamp {
@@ -122,23 +210,42 @@
       bottom: 6px;
       right: 12px;
       font-size: 10px;
-      color: #a0bff9; /* lighter blue for timestamp */
+      color: #a0bff9;
       user-select: none;
+    }
+
+
+    .seen-indicator {
+      font-size: 11px;
+      color: #58a6ff;
+      font-style: italic;
+      margin-top: 2px;
+      user-select: none;
+      text-align: right;
+      width: 100%;
+    }
+
+    #rcn-chats {
+      font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: 30px;
+      color: #58a6ff;
+      font-weight: 100000;
     }
 
     #input-area {
       display: flex;
       padding: 12px 20px;
-      background-color: #0b1025;
+      background-color: #161b22;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     #message-input {
-  flex-grow: 0;         
-  width: 500px;         
-  height: 70px;          
+      flex-grow: 0;
+      width: 500px;
+      height: 70px;
       padding: 10px 12px;
-      font-size: 20px;
+      font-size: 14px;
       border: none;
       border-radius: 20px;
       margin-right: 12px;
@@ -147,23 +254,22 @@
       color: #c9d1d9;
       text-align: center;
       justify-content: center;
-
-  box-shadow: inset 0 0 4px 1px #3e3f41; /* inset navy-blue glow */
+      box-shadow: inset 0 0 4px 1px #3e3f41;
     }
 
     #send-btn {
-      background-color: #1f6feb;
+      background-color: #494491;
       border: none;
       padding: 10px 18px;
-      font-size: 18px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 800;
       color: white;
       border-radius: 20px;
+      width: 90px;
       cursor: pointer;
       transition: background 0.2s ease;
-      box-shadow: inset 0 0 4px 1px #8c99c0;
+      box-shadow: inset 0 0 4px 1px #7b6997;
     }
-
     #send-btn:hover {
       background-color: #3a81ff;
     }
@@ -181,32 +287,53 @@
       user-select: none;
       transition: background 0.2s ease;
     }
-
     #open-chat-btn:hover {
       background-color: #3a81ff;
+    }
+
+    @keyframes smoothEnlarge {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
   </style>
 </head>
 <body>
-  <div id="top-bar" style="display:none;">
-    <div>
-      <div id="current-chat-user">Chatting with: <span id="chat-username">Loading...</span></div>
-      <div id="logged-in-user">Logged in as: <span id="logged-username">...</span></div>
+  <div id="container">
+    <div id="sidebar" style="display:none;">
+      <div id="rcn-chats">Chats</div>
+      <div id="recent-users-list"></div>
     </div>
-    <div class="top-actions">
-      <button class="top-btn" id="change-chat-btn">Change Chat</button>
-      <button class="top-btn" id="logout-btn">Log Out</button>
+
+    <div id="main-chat">
+      <div id="top-bar" style="display:none;">
+        <div id="chat-info">
+          <div id="current-chat-user">Chatting with: <span id="chat-username">Loading...</span></div>
+          <div id="chat-status">(offline)</div>
+          <div id="logged-in-user">Logged in as: <span id="logged-username">...</span></div>
+          <div id="typing-indicator"></div>
+        </div>
+        <div class="top-actions">
+          <button class="top-btn" id="change-chat-btn">Chat</button>
+          <button class="top-btn" id="logout-btn">Log Out</button>
+        </div>
+      </div>
+
+      <div id="messages" style="display:none;"></div>
+
+      <div id="input-area" style="display:none;">
+        <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" />
+        <button id="send-btn">Send</button>
+      </div>
+
+      <button id="open-chat-btn" style="display:none;">Open Chat</button>
     </div>
   </div>
-
-  <div id="messages" style="display:none;"></div>
-
-  <div id="input-area" style="display:none;">
-    <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" />
-    <button id="send-btn">Send</button>
-  </div>
-
-  <button id="open-chat-btn" style="display:none;">Open Chat</button>
 
   <script>
     const firebaseConfig = {
@@ -225,8 +352,17 @@
     let currentUser = null;
     let currentChatUser = null;
     let chatListenerUnsub = null;
+    let typingListenerUnsub = null;
+    let presenceListenerUnsub = null;
+    let typingSetTimeout = null;
 
     const LAST_CHAT_KEY = 'herchat_lastChatUser';
+    const RECENT_CHATS_KEY = 'herchat_recentChats';
+    const TYPING_TIMEOUT_MS = 2000;
+
+    // Track read receipts for seen messages
+    // We'll update a 'lastSeenTimestamp' field in userStatus for currentUser
+    // and compare it with message timestamps to show "seen" under messages.
 
     function getLastChatUser() {
       return localStorage.getItem(LAST_CHAT_KEY);
@@ -236,6 +372,22 @@
       localStorage.setItem(LAST_CHAT_KEY, username);
     }
 
+    function getRecentChats() {
+      try {
+        const recents = JSON.parse(localStorage.getItem(RECENT_CHATS_KEY));
+        if (Array.isArray(recents)) return recents;
+      } catch {}
+      return [];
+    }
+
+    function addRecentChat(username) {
+      let recents = getRecentChats();
+      recents = recents.filter(u => u !== username);
+      recents.unshift(username);
+      if (recents.length > 10) recents = recents.slice(0, 10);
+      localStorage.setItem(RECENT_CHATS_KEY, JSON.stringify(recents));
+    }
+
     function getChatId(u1, u2) {
       return [u1, u2].sort().join('_');
     }
@@ -243,21 +395,32 @@
     function formatTimestamp(ts) {
       if (!ts) return '';
       const date = ts.toDate();
-      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes()
-        .toString().padStart(2, '0')}`;
+      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
     }
 
-    function renderMessages(messages) {
+    // Render messages with "seen" for the last message that the chat partner has seen
+    async function renderMessages(messages) {
       const messagesDiv = document.getElementById('messages');
       messagesDiv.innerHTML = '';
 
-      let currentBubble = null;
+      if (!currentUser || !currentChatUser) return;
+
+      // Get chat partner's lastSeenTimestamp from userStatus doc
+      let partnerStatusDoc;
+      try {
+        partnerStatusDoc = await db.collection('userStatus').doc(currentChatUser).get();
+      } catch (e) {
+        console.error('Error fetching partner status:', e);
+      }
+      const partnerStatus = partnerStatusDoc?.data() || {};
+      const partnerLastSeen = partnerStatus.lastSeenTimestamp ? partnerStatus.lastSeenTimestamp.toMillis() : 0;
+
       let currentFrom = null;
       let currentContainer = null;
+      let currentBubble = null;
 
-      messages.forEach(msg => {
+      messages.forEach((msg, index) => {
         if (msg.from !== currentFrom) {
-          // New sender — create new container and bubble
           currentFrom = msg.from;
 
           currentContainer = document.createElement('div');
@@ -270,7 +433,6 @@
 
           currentContainer.appendChild(currentBubble);
 
-          // Create timestamp element inside bubble
           const time = document.createElement('div');
           time.classList.add('timestamp');
           currentBubble.appendChild(time);
@@ -278,18 +440,77 @@
           messagesDiv.appendChild(currentContainer);
         }
 
-        // Add this message text as a paragraph inside current bubble, before timestamp
         const p = document.createElement('p');
         p.textContent = msg.text;
-        // Insert paragraph before timestamp div (last child)
         currentBubble.insertBefore(p, currentBubble.lastChild);
 
-        // Update timestamp to the latest message timestamp in the group
         const timeDiv = currentBubble.querySelector('.timestamp');
         timeDiv.textContent = formatTimestamp(msg.timestamp);
+
+        // Show "seen" indicator under last message sent by currentUser that chat partner has seen
+        if (
+          msg.from === currentUser.username &&
+          msg.timestamp &&
+          msg.timestamp.toMillis() <= partnerLastSeen
+        ) {
+          // Only add "seen" to last such message
+          // We'll check if next messages also satisfy condition and only put seen on last one
+          const nextMsgs = messages.slice(index + 1);
+          const anyLaterSeen = nextMsgs.some(
+            nm =>
+              nm.from === currentUser.username &&
+              nm.timestamp &&
+              nm.timestamp.toMillis() <= partnerLastSeen
+          );
+          if (!anyLaterSeen) {
+            const seenDiv = document.createElement('div');
+            seenDiv.classList.add('seen-indicator');
+            seenDiv.textContent = 'seen';
+            currentContainer.appendChild(seenDiv);
+          }
+        }
       });
 
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      // After rendering messages, update own lastSeenTimestamp to current time
+      updateLastSeenTimestamp();
+    }
+
+    // Update currentUser's lastSeenTimestamp in userStatus to server time
+    async function updateLastSeenTimestamp() {
+      if (!currentUser || !currentChatUser) return;
+      const statusRef = db.collection('userStatus').doc(currentUser.username);
+      await statusRef.set({
+        lastSeenTimestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+
+    function renderRecentUsers() {
+      const listDiv = document.getElementById('recent-users-list');
+      listDiv.innerHTML = '';
+
+      const recents = getRecentChats().filter(u => u !== currentUser.username);
+      if (recents.length === 0) {
+        listDiv.innerHTML = '<p style="color:#8b949e; text-align:center; font-size:12px;">No recent chats</p>';
+        return;
+      }
+
+      recents.forEach(username => {
+        const userDiv = document.createElement('div');
+        userDiv.classList.add('recent-user');
+        if (username === currentChatUser) userDiv.classList.add('active');
+        userDiv.textContent = username;
+
+        userDiv.onclick = async () => {
+          if (username === currentChatUser) return;
+          await setCurrentChatUser(username);
+          setLastChatUser(username);
+          addRecentChat(username);
+        };
+
+        listDiv.appendChild(userDiv);
+      });
     }
 
     async function listenToChat() {
@@ -318,10 +539,169 @@
         to: currentChatUser,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
+      setTyping(false);
     }
 
+    // Typing indicator management
+    let typingRef = null;
+
+    function setTyping(isTyping) {
+      if (!currentUser || !currentChatUser) return;
+      const chatId = getChatId(currentUser.username, currentChatUser);
+      typingRef = db.collection('typingStatus').doc(chatId);
+      typingRef.set({
+        [currentUser.username]: isTyping
+      }, { merge: true });
+    }
+
+    function listenToTyping() {
+      if (typingListenerUnsub) typingListenerUnsub();
+      if (!currentChatUser) return;
+      const chatId = getChatId(currentUser.username, currentChatUser);
+      const typingDoc = db.collection('typingStatus').doc(chatId);
+      typingListenerUnsub = typingDoc.onSnapshot(doc => {
+        if (!doc.exists) {
+          setTyping(false);
+          document.getElementById('typing-indicator').textContent = '';
+          return;
+        }
+        const data = doc.data() || {};
+        if (data[currentChatUser]) {
+          document.getElementById('typing-indicator').textContent = `${currentChatUser} is typing...`;
+        } else {
+          document.getElementById('typing-indicator').textContent = '';
+        }
+      });
+    }
+
+    document.getElementById('message-input').addEventListener('input', () => {
+      if (typingSetTimeout) clearTimeout(typingSetTimeout);
+      setTyping(true);
+      typingSetTimeout = setTimeout(() => {
+        setTyping(false);
+      }, TYPING_TIMEOUT_MS);
+    });
+
+    document.getElementById('message-input').addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        await sendMessage(document.getElementById('message-input').value);
+        document.getElementById('message-input').value = '';
+      }
+    });
+
+    document.getElementById('send-btn').onclick = async () => {
+      await sendMessage(document.getElementById('message-input').value);
+      document.getElementById('message-input').value = '';
+      document.getElementById('message-input').focus();
+    };
+
+    // Presence tracking
+    let presenceInterval = null;
+
+    async function updatePresence(isOnline, currentChatWith) {
+      if (!currentUser) return;
+      const statusRef = db.collection('userStatus').doc(currentUser.username);
+      await statusRef.set({
+        isOnline,
+        lastOnline: isOnline ? null : firebase.firestore.FieldValue.serverTimestamp(),
+        currentChatWith: currentChatWith || null
+      }, { merge: true });
+    }
+
+    function startPresenceUpdates() {
+      if (!currentUser) return;
+      updatePresence(true, currentChatUser).catch(console.error);
+
+      presenceInterval = setInterval(() => {
+        updatePresence(true, currentChatUser).catch(console.error);
+      }, 30000); // every 30 sec
+    }
+
+    function stopPresenceUpdates() {
+      clearInterval(presenceInterval);
+      updatePresence(false, null).catch(console.error);
+    }
+
+    async function updateCurrentChatPresence(newChatUser) {
+      if (!currentUser) return;
+      const statusRef = db.collection('userStatus').doc(currentUser.username);
+      await statusRef.set({
+        currentChatWith: newChatUser || null
+      }, { merge: true });
+    }
+
+    // Listen to presence of the chat partner and update "last online" / "online" status
+    function listenToChatUserPresence(chatUser) {
+      if (presenceListenerUnsub) presenceListenerUnsub();
+
+      if (!chatUser) {
+        document.getElementById('chat-status').textContent = '';
+        return;
+      }
+
+      const statusRef = db.collection('userStatus').doc(chatUser);
+      presenceListenerUnsub = statusRef.onSnapshot(doc => {
+        if (!doc.exists) {
+          document.getElementById('chat-status').textContent = '(offline)';
+          document.getElementById('chat-status').style.color = '#8b949e';
+          return;
+        }
+        const data = doc.data();
+        if (data.isOnline) {
+          document.getElementById('chat-status').textContent = '(online)';
+          document.getElementById('chat-status').style.color = '#2ecc71'; // green
+        } else {
+          if (data.lastOnline) {
+            const last = data.lastOnline.toDate();
+            const now = new Date();
+            const diffMins = Math.round((now - last) / 60000);
+            let timeText = 'offline';
+            if (diffMins < 1) timeText = 'offline just now';
+            else if (diffMins < 60) timeText = `offline ${diffMins} min ago`;
+            else if (diffMins < 1440) {
+              // Show hours if less than 24h
+              const hours = Math.floor(diffMins / 60);
+              timeText = `offline ${hours} hour${hours > 1 ? 's' : ''} ago`;
+            } else {
+              // Show date if more than 24h ago
+              timeText = `offline on ${last.toLocaleDateString()}`;
+            }
+
+            document.getElementById('chat-status').textContent = `(${timeText})`;
+          } else {
+            document.getElementById('chat-status').textContent = '(offline)';
+          }
+          document.getElementById('chat-status').style.color = '#8b949e';
+        }
+      });
+    }
+
+    async function setCurrentChatUser(username) {
+      currentChatUser = username;
+      document.getElementById('chat-username').textContent = currentChatUser;
+      listenToChat();
+      listenToTyping();
+      listenToChatUserPresence(currentChatUser);
+      updateCurrentChatPresence(currentChatUser);
+      renderRecentUsers();
+      showChatUI();
+    }
+
+    function showChatUI() {
+      document.getElementById('sidebar').style.display = 'flex';
+      document.getElementById('top-bar').style.display = 'flex';
+      document.getElementById('messages').style.display = 'flex';
+      document.getElementById('input-area').style.display = 'flex';
+      document.getElementById('open-chat-btn').style.display = 'none';
+      document.getElementById('message-input').focus();
+    }
+
+    // Change chat prompt
     async function promptChangeChat() {
-      const username = prompt("Enter username to chat with:").toLowerCase();
+      let username = prompt("Enter username to chat with:");
+      if (!username) return;
+      username = username.toLowerCase().trim();
       if (!username || username === currentUser.username) {
         alert("Invalid username.");
         return;
@@ -331,92 +711,62 @@
         alert("User not found.");
         return;
       }
-      currentChatUser = username;
+      await setCurrentChatUser(username);
       setLastChatUser(username);
-      document.getElementById('chat-username').textContent = currentChatUser;
-      listenToChat();
-      showChatUI();
-    }
-
-    function showChatUI() {
-      document.getElementById('top-bar').style.display = 'flex';
-      document.getElementById('messages').style.display = 'flex';
-      document.getElementById('input-area').style.display = 'flex';
-      document.getElementById('open-chat-btn').style.display = 'none';
-    }
-
-    function showOpenChatButton() {
-      document.getElementById('top-bar').style.display = 'none';
-      document.getElementById('messages').style.display = 'none';
-      document.getElementById('input-area').style.display = 'none';
-      document.getElementById('open-chat-btn').style.display = 'block';
-    }
-
-    async function init() {
-      return new Promise((resolve, reject) => {
-        auth.onAuthStateChanged(async (user) => {
-          if (user) {
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            if (!userDoc.exists) {
-              alert('User data not found. Please log in again.');
-              auth.signOut();
-              window.location.href = 'index.html';
-              reject();
-              return;
-            }
-            currentUser = { uid: user.uid, ...userDoc.data() };
-            document.getElementById('logged-username').textContent = currentUser.username;
-
-            const lastChatUser = getLastChatUser();
-            if (lastChatUser && lastChatUser !== currentUser.username) {
-              const doc = await db.collection('usernames').doc(lastChatUser).get();
-              if (doc.exists) {
-                currentChatUser = lastChatUser;
-                document.getElementById('chat-username').textContent = currentChatUser;
-                listenToChat();
-                showChatUI();
-                resolve();
-                return;
-              }
-            }
-            showOpenChatButton();
-            resolve();
-          } else {
-            window.location.href = 'index.html';
-            reject();
-          }
-        });
-      });
+      addRecentChat(username);
     }
 
     document.getElementById('change-chat-btn').onclick = promptChangeChat;
 
-    document.getElementById('logout-btn').onclick = () => {
-      auth.signOut().then(() => {
-        window.location.href = 'index.html';
-      });
+    document.getElementById('logout-btn').onclick = async () => {
+      stopPresenceUpdates();
+      await auth.signOut();
+      location.reload();
     };
 
-    document.getElementById('send-btn').onclick = async () => {
-      const input = document.getElementById('message-input');
-      await sendMessage(input.value);
-      input.value = '';
-      input.focus();
-    };
-
-    document.getElementById('message-input').addEventListener('keydown', async (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        await sendMessage(e.target.value);
-        e.target.value = '';
+    // Initial auth and setup
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+          await auth.signInWithPopup(provider);
+        } catch (e) {
+          alert("Google sign-in failed.");
+          return;
+        }
       }
+
+      // Get username doc from uid
+      const userDocs = await db.collection('usernames').where('uid', '==', auth.currentUser.uid).limit(1).get();
+      if (userDocs.empty) {
+        alert("Username not set for this account.");
+        return;
+      }
+
+      currentUser = {
+        username: userDocs.docs[0].id,
+        uid: auth.currentUser.uid,
+      };
+
+      document.getElementById('logged-username').textContent = currentUser.username;
+
+      renderRecentUsers();
+
+      const lastUser = getLastChatUser();
+
+      if (lastUser) {
+        await setCurrentChatUser(lastUser);
+      } else {
+        document.getElementById('open-chat-btn').style.display = 'block';
+        document.getElementById('open-chat-btn').onclick = promptChangeChat;
+      }
+
+      startPresenceUpdates();
+
+      window.addEventListener('beforeunload', () => {
+        stopPresenceUpdates();
+      });
     });
-
-    document.getElementById('open-chat-btn').onclick = promptChangeChat;
-
-    init();
   </script>
 </body>
 </html>
-
-
